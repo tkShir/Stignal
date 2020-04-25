@@ -1,0 +1,78 @@
+Public messaging secure steganosystem.
+=======================================
+Share a SHA3 CTR PRF F(K, C) K=key C= counter
+=======================================
+Share a text generator model T(C) such that T(C) generates an array of 255 words, C specifies the deterministic random array to be generated. each word correspond to its number. E.G: 
+
+T(1) =
+1. hello
+2. I
+3. am
+4. in
+5. EC521
+.
+.
+.
+.
+250. it
+251. is 
+252. a
+253. course
+254. for
+255. elite
+256. hackers
+
+if we want to send byte 00000100, then send "in". the server recieves "in" and decodes it to 00001000. this can be done for half bytes at a time as well.
+T(1)=
+1. hello
+2. world
+3. it
+.
+.
+.
+32. over
+
+
+if we want to send half byte 1111, then send "over". server sees "over" and decodes it to 1111.
+
+the requirement is that T(2) generates an array that, when any word from array T(2) is chosen, it will form a logical text when combined with any word from array T(1).
+the other requirement is that T(1)client == T(1)server ... T(N)client == T(N)server. this is done using a deterministic generator based on counter n
+
+
+[the ecoding of text can be in the MAC address if we will use HTTPS on garbage data. or in the payload if we want to use HTTP. for different threat models, first one is when the attacker will be suspicious of HTTP second one if attacker will be suspicious of HTTPS. The HTTP model is used when a computer is the attacker actively trying to uncover the steganotraffic. the HTTPS model is used when a human is actively monitoring the steganotraffic. The HTTP payload method applies to IPv4 as well]
+
+Stream cipher S:
+
+				exchange (K and T())
+Person <-----------------------------------> Server
+
+Person does the following for plain byte b1. plain byte b1 is enciphered by the OTP key o generated from F(k, 1), this gives cipher byte C1, then C1 is transformed into a word corresponding in array T(1). This will give a steganobyte S1. In other words, S1 = T(1)[C1]. in other words, S1 = T(1)[F(K, 1) xor b1]. or S1 = T(1)[O1 xor b1]
+
+person ------------S1-------------------> server
+
+Server recieves S1. then does the following to recover b1. C1 = Tinv(1)[S1]. then b1 = C1 xor F(K, 1).
+
+
+in other words, b1 = [(Tinv(1)[S1]) xor F(K, 1)].
+
+
+
+
+https://github.com/minimaxir/textgenrnn
+this is secure because small difference in the training data will give out highly variable results. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
