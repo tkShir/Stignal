@@ -66,14 +66,17 @@ To illustrate the protocol:
 				exchange (K and T())
 Alice <---------------------------------> Bob  [no EVE or any attackers on first exchange]
 
-Alice does the following for plain byte b1 she wants to send. plain byte b1 is enciphered by the OTP key o generated from F(k, 1), this gives cipher byte C1, then C1 is transformed into a word corresponding in array T(1). This will give a steganobyte S1. In other words, S1 = T(1)[C1]. in other words, S1 = T(1)[F(K, 1) xor b1]. or S1 = T(1)[O1 xor b1]
+Alice does the following for plain byte b1 she wants to send. plain byte b1 is enciphered by the OTP key o generated from F(k, 1), this gives cipher byte C1, then C1 is transformed into a word corresponding in array T(1). This will give a steganobyte S1. In other words, S1 = T(1)[C1]. in other words, S1 = T(1)[F(K, 1) xor b1]. or S1 = T(1)[O1 xor b1].
 
-person ------------S1-------------------> server
+			-s1->
+Alice ------------EVE-------------------> Bob
 
 Server recieves S1. then does the following to recover b1. C1 = Tinv(1)[S1]. then b1 = C1 xor F(K, 1).
 
 
 in other words, b1 = [(Tinv(1)[S1]) xor F(K, 1)].
+
+EVE can only see innocent english text sent back and forth.
 
 
 
