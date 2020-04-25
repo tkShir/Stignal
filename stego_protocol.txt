@@ -1,10 +1,24 @@
 Public messaging secure steganosystem.
 =======================================
-Share a SHA3 CTR PRF F(K, C) K=key C= counter
-=======================================
-Share a text generator model T(C) such that T(C) generates an array of 255 words, C specifies the deterministic random array to be generated. each word correspond to its number. E.G: 
+Assume we have two parties Alice and Bob that want to communicate with each other without raising suspicioun of the Man in the middle attacker EVE. Raising the suspicious of EVE causes the scheme to fail. Therefore, Alice and Bob can only communicate in regular plaintext that looks innocent. A plaintext that "looks" innocent cannot be differentiated from "true" innocent plaintext.
 
-T(1) =
+The goal is that the attacker EVE will not be able to detect if the data in transit had undergone encryption or transformed under any steganography method or if it was just legitimate human writing.
+
+EVE in this case is a computer running arbitrary types of analysis, since. Since on the internet, no entity can afford to assign humans on every communication channel. Moreover, virtually all steganalysis is done by computers[1] We assume that human action is taken only after the computer EVE detects that the data is not innocent, which then the computer can alert the human attacker.
+
+
+Alice <-------------EVE------------> Bob
+
+The only possible way to win this system is by alice and bob sending each other text that hides real data such that this text is indistiguishable from real human writing.
+
+
+Since Alice and Bob cannot start communicating in innocent looking steganotext yet without sharing their initial secret keys and data. The only way to start using the steganosystem is by meeting beforehand and exchanging the secrets. Or by exchnaging the secrets using an encrypted, unmonitored channel online. Eitherways, we assume that one initial unmonitored data exchange can take place.
+
+Share a CTR PRF F(K, C) K=key C= counter. This will be used to encrypt the message before applying steganography. Encryption is helpful in case the steganotext gets uncovered. Then we will be left with random encrypted bytes, which reveal nothing about the message.
+=======================================
+Share a text generator model T(C) such that T(C) generates an array of 256 words, C specifies the deterministic random array to be generated. each word correspond to its number. E.G: 
+
+T(1) ={1:hello, 2:I, 3:am, 4:in, 5:EC521, ... ,250:it, 251:is, 252:a, 253:course, 254:for, 255:elite, 256:hackers}
 1. hello
 2. I
 3. am
@@ -22,7 +36,14 @@ T(1) =
 255. elite
 256. hackers
 
-if we want to send byte 00000100, then send "in". the server recieves "in" and decodes it to 00001000. this can be done for half bytes at a time as well.
+if alice sends byte 00000100, then alice send "in" to bob. Bob recieves "in" and decodes it to 00001000. EVE has only seen a normal word. However, the scheme should be secure against steganalysis on every packet.
+
+It may be helpful to use dictionaries for transformations, for example:
+T(1) = {1:hello, 2:I, 3:am, 4:in, 5:EC521, ... ,250:it, 251:is, 252:a, 253:course, 254:for, 255:elite, 256:hackers}
+then we can transform the first byte using T(1)[00000100] which is = "in".
+
+
+this can be done for half bytes at a time as well.
 T(1)=
 1. hello
 2. world
@@ -33,20 +54,19 @@ T(1)=
 32. over
 
 
-if we want to send half byte 1111, then send "over". server sees "over" and decodes it to 1111.
-
-the requirement is that T(2) generates an array that, when any word from array T(2) is chosen, it will form a logical text when combined with any word from array T(1).
-the other requirement is that T(1)client == T(1)server ... T(N)client == T(N)server. this is done using a deterministic generator based on counter n
+if we want to send half byte 1111, then send "over". server sees "over" and decodes it to 1111. We will use the half byte transformation since it will be more efficient to calculate 32 words every after every transformation. And the limited choices may allow for a more coherent text generation.
 
 
-[the ecoding of text can be in the MAC address if we will use HTTPS on garbage data. or in the payload if we want to use HTTP. for different threat models, first one is when the attacker will be suspicious of HTTP second one if attacker will be suspicious of HTTPS. The HTTP model is used when a computer is the attacker actively trying to uncover the steganotraffic. the HTTPS model is used when a human is actively monitoring the steganotraffic. The HTTP payload method applies to IPv4 as well]
+the requirement is that T(2) generates an array that, when any word from array T(2) is chosen, it will form a logical text when combined with the word chosen by Alice from array T(1).
+the other requirement is that T(1)alice == T(1)bob ... T(N)alice == T(N)bob. this is done using a deterministic generator based on counter n.
 
-Stream cipher S:
+To illustrate the protocol:
+
 
 				exchange (K and T())
-Person <-----------------------------------> Server
+Alice <---------------------------------> Bob  [no EVE or any attackers on first exchange]
 
-Person does the following for plain byte b1. plain byte b1 is enciphered by the OTP key o generated from F(k, 1), this gives cipher byte C1, then C1 is transformed into a word corresponding in array T(1). This will give a steganobyte S1. In other words, S1 = T(1)[C1]. in other words, S1 = T(1)[F(K, 1) xor b1]. or S1 = T(1)[O1 xor b1]
+Alice does the following for plain byte b1 she wants to send. plain byte b1 is enciphered by the OTP key o generated from F(k, 1), this gives cipher byte C1, then C1 is transformed into a word corresponding in array T(1). This will give a steganobyte S1. In other words, S1 = T(1)[C1]. in other words, S1 = T(1)[F(K, 1) xor b1]. or S1 = T(1)[O1 xor b1]
 
 person ------------S1-------------------> server
 
@@ -59,20 +79,11 @@ in other words, b1 = [(Tinv(1)[S1]) xor F(K, 1)].
 
 
 https://github.com/minimaxir/textgenrnn
-this is secure because small difference in the training data will give out highly variable results. 
+the use of text generation neural network is secure because small difference in the training data will give out highly variable results. therefore, the key is the documents, which entered into the (function) neural network, to get the random model T.
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
+[1]https://www.cse.wustl.edu/~jain/cse571-09/ftp/stegano/index.html section 4.1
