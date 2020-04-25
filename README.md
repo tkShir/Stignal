@@ -2,9 +2,9 @@
 
 TODO:
 
-Function to send IP packets.
+Function to send IP packets containing stegotext.
 
-Function to recieve IP packets.
+Function to recieve IP packets and extract the stegotext, so that we can operate on it.
 
 Finding a deterministic neural networking model to be exchanged.
 
