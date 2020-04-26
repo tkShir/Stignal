@@ -1,0 +1,15 @@
+1. Convert text to stego file
+input: text file,key
+output: stego file
+
+2. Send stego file
+input: stego file, ip address
+3. Receive stego file
+output: stego file, sender's ip
+
+4. Convert stego file back to text
+input: stego file,key
+output: text file
+
+
+the word key here is loosely used since stego files don't always have a key, it could be a key image or somethign similar
