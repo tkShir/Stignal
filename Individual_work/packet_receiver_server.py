@@ -13,7 +13,11 @@ key_input = ''
 def chat_server():
     HOST = raw_input("Server IP: ")
     PORT = int(raw_input("Server port: "))
-    KEY = bytes(raw_input("Encryption key: "))
+
+    KEY = b''
+    while not (len(KEY) == 16 or len(KEY) == 24 or len(KEY) == 32):
+        KEY = bytes(raw_input("Encryption key: "))
+
     os.system('clear')
 
     print("+-+-+-+ Welcome to SteganoChat +-+-+-+\n" 
