@@ -12,6 +12,7 @@ key_input = ''
 def chat_server():
     HOST = raw_input("Server IP: ")
     PORT = int(raw_input("Server port: "))
+    KEY = raw_input("Encryption key: ")
 
     print("+-+-+-+ Welcome to SteganoChat +-+-+-+\n" 
         + "*** If you want to hide something ****\n"
