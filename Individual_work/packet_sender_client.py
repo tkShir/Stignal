@@ -14,6 +14,7 @@ def chat_client():
     # host = sys.argv[1]
     port = int(raw_input("Chat room port: "))
     KEY = raw_input("Encryption key: ")
+    os.system('clear')
     # port = int(sys.argv[2])
     print("+-+-+-+ Welcome to SteganoChat +-+-+-+\n" 
         + "*** If you want to hide something ****\n"
