@@ -2,6 +2,7 @@ import sys
 import socket
 import select
 import os
+from Crypto.Cipher import AES
 
 def chat_client():
     #if(len(sys.argv) < 3) :
@@ -12,7 +13,11 @@ def chat_client():
     host = raw_input("Chat room IP: ")
     # host = sys.argv[1]
     port = int(raw_input("Chat room port: "))
-    KEY = bytes(raw_input("Encryption key: "))
+
+    KEY = b''
+    while not (len(KEY) == 16 or len(KEY) == 24 or len(KEY) == 32):
+        KEY = bytes(raw_input("Encryption key: "))
+
     os.system('clear')
     # port = int(sys.argv[2])
     print("+-+-+-+ Welcome to SteganoChat +-+-+-+\n" 
@@ -54,14 +59,73 @@ def chat_client():
                     sys.exit()
                 else :
                     #print data
-                    sys.stdout.write(data)
+                    process_packet(data, KEY)
                     sys.stdout.write('[Me] '); sys.stdout.flush()     
             
             else :
                 # user entered a message
                 msg = sys.stdin.readline()
-                s.send(msg)
+
+                send_packet(msg, s, KEY)
+
                 sys.stdout.write('[Me] '); sys.stdout.flush()
+
+def send_packet(msg, socket, key):
+    ctxt, nonce = encrypt(msg, key)
+    nonce_and_ctxt = nonce + bytes('|||', 'utf-8') + ctxt
+
+    # Do stego magic on the nonce_and_ctxt variable
+
+
+    socket.send(nonce_and_ctxt)
+    return None
+
+def process_packet(data, key):
+    try:
+        split_nonce_and_ctxt = data.split(b'|||')
+        nonce, ctxt = split_nonce_and_ctxt[0], split_nonce_and_ctxt[1]
+    except:
+        sys.stdout.write('Packet Error: Data received was not valid')
+        return None
+    
+    message = decrypt(ctxt, key, nonce)
+    sys.stdout.write(message)
+    return None
+
+
+
+def encrypt(message, key):
+    """
+    Input:
+        message: string
+        key: bytes/bytearray/memoryview (Must be 16, 24, or 32 bytes long)
+    Output:
+        ciphertext: bytes
+        tag:
+    """
+
+    if not (len(key) == 16 or len(key) == 24 or len(key) == 32):
+        print('Key Length Incorrect (length: %s)' %len(key))
+        print('Exiting Encryption Method...')
+        return None
+
+    data = bytes(message, 'utf-8')
+    cipher = AES.new(key, AES.MODE_CTR)
+    ct_bytes = cipher.encrypt(data)
+    nonce = cipher.nonce
+
+    return (ct_bytes, nonce)
+
+def decrypt(ciphertext, key, nonce):
+    try:
+        cipher = AES.new(key, AES.MODE_CTR, nonce=nonce)
+        plaintext_bytes = cipher.decrypt(ciphertext)
+        plaintext = plaintext_bytes.decode('utf-8')
+        return plaintext
+    except Exception:
+        print("Incorrect decryption")
+        return None
+
 
 if __name__ == "__main__":
     sys.exit(chat_client())
