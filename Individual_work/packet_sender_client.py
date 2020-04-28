@@ -18,6 +18,8 @@ def chat_client():
         + "*** If you want to hide something ****\n"
         + "*** important from the government ****\n"
         + "*** we're here to help you.       ****\n"
+        + "-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n"
+        + "*** Connecting to chat room...    ****\n"
         + "-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
      
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -30,9 +32,9 @@ def chat_client():
         print('Unable to connect')
         sys.exit()
      
-    print('-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+'
+    print('&&&                                &&&\n'
         + '*** Connected to remote chatroom. ****\n'
-        + '*** Start securely messaging now! ****'
+        + '*** Start securely messaging now! ****\n'
         + '-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
     sys.stdout.write('[Me] '); sys.stdout.flush()
      

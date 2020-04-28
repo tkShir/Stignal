@@ -10,6 +10,17 @@ PORT = 9009
 key_input = ''
 
 def chat_server():
+    HOST = raw_input("Server IP: ")
+    PORT = int(raw_input("Server port: "))
+
+    print("+-+-+-+ Welcome to SteganoChat +-+-+-+\n" 
+        + "*** If you want to hide something ****\n"
+        + "*** important from the government ****\n"
+        + "*** we're here to help you.       ****\n"
+        + "-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n"
+        + "*** Starting your server...       ****\n"
+        + "-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((HOST, PORT))
@@ -17,7 +28,10 @@ def chat_server():
  
     # add server socket object to the list of readable connections
     SOCKET_LIST.append(server_socket)
- 
+    print('&&&                                &&&\n'
+        + '*** Server started successfully.  ****\n'
+        + '*** Start securely messaging now! ****\n'
+        + '-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
     print("Chat server started on port " + str(PORT))
  
     while 1:
