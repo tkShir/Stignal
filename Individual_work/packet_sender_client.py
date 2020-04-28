@@ -1,8 +1,7 @@
 import sys
 import socket
 import select
-
-
+import os
 
 def chat_client():
     #if(len(sys.argv) < 3) :
@@ -13,7 +12,7 @@ def chat_client():
     host = raw_input("Chat room IP: ")
     # host = sys.argv[1]
     port = int(raw_input("Chat room port: "))
-    KEY = raw_input("Encryption key: ")
+    KEY = bytes(raw_input("Encryption key: "))
     os.system('clear')
     # port = int(sys.argv[2])
     print("+-+-+-+ Welcome to SteganoChat +-+-+-+\n" 
