@@ -1,12 +1,13 @@
 import sys
 import socket
 import select
-from enc_and_dec import decrypt
+# from enc_and_dec import decrypt
 
 HOST = '' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
+key_input = ''
 
 def chat_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,7 +43,9 @@ def chat_server():
                     data = sock.recv(RECV_BUFFER)
                     if data:
                         # there is something in the socket
-                        output_data = do_something_with_incoming_data(data)
+                        
+                        output_data = data # do_something_with_incoming_data(data)
+                        # print(data)
                         broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + output_data)  
                     else:
                         # remove the socket that's broken    
@@ -60,9 +63,13 @@ def chat_server():
     server_socket.close()
 
 def do_something_with_incoming_data(data):
-	zi = data.split("|||")
-	decrypted_data = decrypt()
-	return decrypted_data
+    '''datareg = data.decode("utf-8")
+	zi = datareg.split("|||")
+    nonce1 = bytes(zi[0])
+    datas = bytes(z[1])
+	decrypted_data = decrypt(datas, key_input, nonce1)
+    return decrypted_data'''
+    pass
     
 # broadcast chat messages to all connected clients
 def broadcast(server_socket, sock, message):
