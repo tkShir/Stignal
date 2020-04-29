@@ -85,8 +85,12 @@ def chat_client():
                 msg = sys.stdin.readline().replace('\n', '')
 
                 file_contents = ""
+
+                # Quits the chat room
                 if msg == "/quit":
                     exit(0)
+
+                # Allows a file to be sent
                 if msg[0:6] == "/file ":
                     file_extp = msg[6:].strip()
                     try:
@@ -157,6 +161,7 @@ def process_packet(stego_data, key, verbose):
 
     dec = decrypt(ctxt, key, nonce)
 
+    # Allows a file to be received; the file is written in the same directory as the script
     if dec[0:6] == "/file ":
         file_cal = dec[6:].strip()
         f = open('msg' + str(random.randint(0, 99999)) + '.txt', 'wb')
