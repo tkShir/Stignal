@@ -21,7 +21,7 @@ def chat_client():
 		host = 'localhost'
 		port = 9009
 
-	KEY = b''
+	KEY = bytes(raw_input("Encryption key: "))
 	while not (len(KEY) == 16 or len(KEY) == 24 or len(KEY) == 32):
 		print('\tError: Key Length is Incorrect, enter key with length 16, 24, or 32.')
 		KEY = bytes(raw_input("Encryption key: "))
@@ -140,6 +140,8 @@ def process_packet(data, key, verbose):
 		return None
 
 	if verbose:
+		# Yeah the formatting is inconsistent which drives me nuts but when i try print(blah: '%s' % stego_data) it
+		# doesn't print the 'blah: ' part and only prints the stego_data so p much impossible to format
 		print('\nReceived Text:')
 		print(stego_data)
 		print('Stego-text transformed back to original data:')
