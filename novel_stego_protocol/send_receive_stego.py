@@ -107,8 +107,17 @@ def send_packet(msg, socket, key, verbose):
 	return None
 
 
-def process_packet(stego_data, key, verbose):
-	# Reverse stego magic
+def process_packet(data, key, verbose):
+	# I don't know why but the nonce|||ciphertext which one client sends gets pre-appended with IP and Port
+	# In order to combat this here's some messy code
+	# When applying stego, it might glitch out so try to print them out to make sure everything is ok
+	#
+	# print(data)
+	intro_end_idx = data.index(']')
+	intro, stego_data = data[:intro_end_idx + 2], data[intro_end_idx + 2:]
+	# print(intro, stego_data)
+
+	# Do some stego magic to revert the packet sent to us to original data
 	orig_data = stego_data
 
 	try:
@@ -119,10 +128,6 @@ def process_packet(stego_data, key, verbose):
 
 		ctxt = split_intro_nonce_and_ctxt[1]
 
-		# Sorry for weird implementation, it's because of the packets being sent sends a IP/Port header which makes it messy
-		intro_end_idx = split_intro_nonce_and_ctxt[0].index(']')
-		intro, nonce = split_intro_nonce_and_ctxt[0][:intro_end_idx + 2], split_intro_nonce_and_ctxt[0][
-																		  intro_end_idx + 2:]
 	except:
 		sys.stdout.write('Packet Error: Data received was not valid\n')
 		return None
