@@ -4,6 +4,9 @@ import select
 import os
 # from enc_and_dec import decrypt
 
+# Baseline code was taken from the website: https://www.bogotobogo.com/python/python_network_programming_tcp_server_client_chat_server_chat_client_select.php
+# and repurposed to fit our needs
+
 HOST = '' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 

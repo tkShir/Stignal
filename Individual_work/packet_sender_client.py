@@ -4,6 +4,9 @@ import select
 import os
 from Crypto.Cipher import AES
 
+# Baseline code was taken from the website: https://www.bogotobogo.com/python/python_network_programming_tcp_server_client_chat_server_chat_client_select.php
+# and repurposed to fit our needs
+
 def chat_client():
     #if(len(sys.argv) < 3) :
     #    print('Usage : python chat_client.py hostname port')
