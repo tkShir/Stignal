@@ -9,14 +9,26 @@ def chat_client():
     #    print('Usage : python chat_client.py hostname port')
     #    sys.exit()
 
-    # For sake of good UI
-    host = raw_input("Chat room IP: ")
-    # host = sys.argv[1]
-    port = int(raw_input("Chat room port: "))
+    # Default Parameters:
+    default = raw_input("Use default settings for IP and port settings? [y/N]: ")
+
+    if default != 'y':
+        # For sake of good UI
+        host = raw_input("Chat room IP: ")
+        port = int(raw_input("Chat room port: "))
+    else:
+        host = 'localhost'
+        port = 9009
 
     KEY = b''
     while not (len(KEY) == 16 or len(KEY) == 24 or len(KEY) == 32):
         KEY = bytes(raw_input("Encryption key: "))
+    
+    verbose = raw_input('Do you want to turn on verbose mode? [y/N]: ')
+    if verbose == 'y':
+        verbose = True
+    else:
+        verbose = False
 
     os.system('clear')
     # port = int(sys.argv[2])
@@ -59,36 +71,69 @@ def chat_client():
                     sys.exit()
                 else :
                     #print data
-                    process_packet(data, KEY)
+                    process_packet(data, KEY, verbose)
                     sys.stdout.write('[Me] '); sys.stdout.flush()     
             
             else :
                 # user entered a message
-                msg = sys.stdin.readline()
+                msg = sys.stdin.readline().replace('\n', '')
 
-                send_packet(msg, s, KEY)
+                send_packet(msg, s, KEY, verbose)
 
                 sys.stdout.write('[Me] '); sys.stdout.flush()
 
-def send_packet(msg, socket, key):
+
+
+def send_packet(msg, socket, key, verbose):
     ctxt, nonce = encrypt(msg, key)
-    nonce_and_ctxt = nonce + bytes('|||', 'utf-8') + ctxt
+    nonce_and_ctxt = nonce + bytes('|||') + ctxt
 
     # Do stego magic on the nonce_and_ctxt variable
+    stego_text = nonce_and_ctxt
 
 
-    socket.send(nonce_and_ctxt)
+    # If verbose mode turned on show all info.
+    if verbose:
+        print('\tSending Message: %s' % msg)
+        print('\tCipherText: %s' % ctxt)
+        print('\tNonce: %s' % nonce)
+        print('\tData to be sent: %s' % nonce_and_ctxt)
+        print('\tStego Transformed Text: %s' % stego_text)
+        print('')
+
+    socket.send(stego_text)
     return None
 
-def process_packet(data, key):
+def process_packet(stego_data, key, verbose):
+    # Reverse stego magic
+    orig_data = stego_data
+
+
     try:
-        split_nonce_and_ctxt = data.split(b'|||')
-        nonce, ctxt = split_nonce_and_ctxt[0], split_nonce_and_ctxt[1]
+        split_intro_nonce_and_ctxt = orig_data.split(b'|||')
+        if len(split_intro_nonce_and_ctxt) < 2:
+            sys.stdout.write(orig_data)
+            return None
+
+        ctxt = split_intro_nonce_and_ctxt[1]
+
+        # Sorry for weird implementation, it's because of the packets being sent sends a IP/Port header which makes it messy
+        intro_end_idx = split_intro_nonce_and_ctxt[0].index(']')
+        intro, nonce = split_intro_nonce_and_ctxt[0][:intro_end_idx+2], split_intro_nonce_and_ctxt[0][intro_end_idx+2:]
     except:
-        sys.stdout.write('Packet Error: Data received was not valid')
+        sys.stdout.write('Packet Error: Data received was not valid\n')
         return None
-    
-    message = decrypt(ctxt, key, nonce)
+
+    if verbose:
+        sys.stdout.write('\tReceived Text: %s \n' % stego_data)
+        sys.stdout.write('\tStego-text transformed back to original data: %s \n' % orig_data)
+        sys.stdout.write('\tCipherText: %s \n' % ctxt)
+        sys.stdout.write('\tNonce: %s \n' % nonce)
+        print('')
+
+
+    message = intro + ' ' + decrypt(ctxt, key, nonce) + '\n'
+
     sys.stdout.write(message)
     return None
 
@@ -109,7 +154,7 @@ def encrypt(message, key):
         print('Exiting Encryption Method...')
         return None
 
-    data = bytes(message, 'utf-8')
+    data = bytes(message)
     cipher = AES.new(key, AES.MODE_CTR)
     ct_bytes = cipher.encrypt(data)
     nonce = cipher.nonce
