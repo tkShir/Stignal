@@ -15,6 +15,7 @@ PORT = 9009
 key_input = ''
 
 def chat_server():
+    # Get server input details
     HOST = raw_input("Server IP: ")
     PORT = int(raw_input("Server port: "))
 
@@ -52,7 +53,7 @@ def chat_server():
             if sock == server_socket: 
                 sockfd, addr = server_socket.accept()
                 SOCKET_LIST.append(sockfd)
-                print("Client (%s, %s) connected" % addr)
+                print("User (%s, %s) has connected to the server." % addr)
                  
                 broadcast(server_socket, sockfd, "[%s:%s] entered our chatting room\n" % addr)
              
