@@ -2,9 +2,10 @@ import sys
 import socket
 import select
 import os
-# from enc_and_dec import decrypt
 
-# Baseline code was taken from the website: https://www.bogotobogo.com/python/python_network_programming_tcp_server_client_chat_server_chat_client_select.php
+# Baseline code was taken from the following website tutorials:
+# * https://www.bogotobogo.com/python/python_network_programming_tcp_server_client_chat_server_chat_client_select.php
+# * https://pythonprogramming.net/server-chatroom-sockets-tutorial-python-3/
 # and repurposed to fit our needs
 
 HOST = '' 
