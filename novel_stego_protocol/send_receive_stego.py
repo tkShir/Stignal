@@ -93,6 +93,7 @@ def send_packet(msg, socket, key, verbose):
 	nonce_and_ctxt = nonce + bytes('|||') + ctxt
 
 	# Do stego magic on the nonce_and_ctxt variable
+	# stego_text = apply_stego(nonce_and_ctxt)
 	stego_text = nonce_and_ctxt
 
 	# If verbose mode turned on show all info.
@@ -119,6 +120,7 @@ def process_packet(data, key, verbose):
 	# print(intro, stego_data)
 
 	# Do some stego magic to revert the packet sent to us to original data
+	# orig_data = revert_stego(stego_data)
 	orig_data = stego_data
 
 	try:
@@ -127,7 +129,11 @@ def process_packet(data, key, verbose):
 			sys.stdout.write(orig_data)
 			return None
 
-		ctxt = split_intro_nonce_and_ctxt[1]
+		# Once again pls make sure it's doing correctly, to debug turn on verbose mode on both clients and commpare
+		# the two debug outputs
+		nonce, ctxt = split_intro_nonce_and_ctxt[0], split_intro_nonce_and_ctxt[1]
+		# print(nonce)
+		# print(ctxt)
 
 	except:
 		sys.stdout.write('Packet Error: Data received was not valid\n')
