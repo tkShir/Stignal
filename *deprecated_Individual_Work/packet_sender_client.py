@@ -2,6 +2,7 @@ import sys
 import socket
 import select
 import os
+import random
 from Crypto.Cipher import AES
 
 # Baseline code was taken from the following website tutorials:
@@ -14,11 +15,11 @@ def chat_client():
 
     if default != 'y':
         # For the sake of good UI, get user input details
-        host = raw_input("Chat room IP: ")
-        port = int(raw_input("Chat room port: "))
+        HOST = raw_input("Chat room IP: ")
+        PORT = int(raw_input("Chat room port: "))
     else:
-        host = 'localhost'
-        port = 9009
+        HOST = 'localhost'
+        PORT = 9009
 
     KEY = b''
     while not (len(KEY) == 16 or len(KEY) == 24 or len(KEY) == 32):
@@ -43,19 +44,21 @@ def chat_client():
      
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(2)
-     
+    
     # Connect to the server
     try:
-        s.connect((host, port))
-    except:
+        s.connect((HOST, PORT))
+    except Exception as e:
         print("Unable to connect to server. Exiting.")
+        print(e)
         exit(0)
      
     print('&&&                                &&&\n'
         + '*** Connected to remote chatroom. ****\n'
         + '*** Start securely messaging now! ****\n'
         + '-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
-    sys.stdout.write("*** Me: "); sys.stdout.flush()
+    sys.stdout.write("*** Me: ")
+    sys.stdout.flush()
      
     while 1:
         socket_list = [sys.stdin, s]
@@ -73,15 +76,31 @@ def chat_client():
                 else :
                     # Print the data
                     process_packet(data, KEY, verbose)
-                    sys.stdout.write("*** [Me]: ")
+                    sys.stdout.write("*** Me: ")
                     sys.stdout.flush()
             
+            # aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             else :
                 # User sends a message
                 msg = sys.stdin.readline().replace('\n', '')
 
+                file_contents = ""
+                if msg == "/quit":
+                    exit(0)
+                if msg[0:6] == "/file ":
+                    file_extp = msg[6:].strip()
+                    try:
+                        f = open(file_extp, "rb")
+                        content = f.read()
+                        msg = "/file " + content
+                        f.close()
+                        
+                    except Exception as e:
+                        sys.stdout.write("Error in file path. Code broke.")
+                        exit(0)
+
                 send_packet(msg, s, KEY, verbose)
-                sys.stdout.write('*** [Me]: ')
+                sys.stdout.write('*** Me: ')
                 sys.stdout.flush()
 
 
@@ -129,15 +148,23 @@ def process_packet(stego_data, key, verbose):
 
 
     if verbose:
-        print("\nReceived Text:")
+        print("Received Text:")
         print(stego_data)
         print("Stego-text transformed back to original data:")
-        print(orig_data)
+        print("%s" % orig_data)
         print("Ciphertext: %s" % ctxt)
-        print("Nonce: %s" % nonce)
+        print(nonce)
 
-    message = "\n" + intro + "sent a message:" + decrypt(ctxt, key, nonce) + "\n"
-    print(message)
+    dec = decrypt(ctxt, key, nonce)
+
+    if dec[0:6] == "/file ":
+        file_cal = dec[6:].strip()
+        f = open('msg' + str(random.randint(0, 99999)) + '.txt', 'wb')
+        f.write(file_cal)
+        f.close()
+
+    message = str(intro).strip() + ": " + dec + "\n"
+    sys.stdout.write(message)
     return None
 
 
