@@ -54,7 +54,7 @@ T(1)=
 32. over
 
 
-if we want to send half byte 1111, then send "over". server sees "over" and decodes it to 1111. We will use the half byte transformation since it will be more efficient to calculate 32 words every after every transformation. And the limited choices may allow for a more coherent text generation.
+if we want to send half byte 1111, then send "over". server sees "over" and decodes it to 1111. We will use the half byte transformation since it will be more efficient to calculate 32 words after every transformation. And the limited choices may allow for a more coherent text generation.
 
 
 the requirement is that T(2) generates an array that, when any word from array T(2) is chosen, it will form a logical text when combined with the word chosen by Alice from array T(1).
