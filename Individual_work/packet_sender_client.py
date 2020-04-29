@@ -124,17 +124,19 @@ def process_packet(stego_data, key, verbose):
         sys.stdout.write('Packet Error: Data received was not valid\n')
         return None
 
+
+
     if verbose:
-        sys.stdout.write('\tReceived Text: %s \n' % stego_data)
-        sys.stdout.write('\tStego-text transformed back to original data: %s \n' % orig_data)
-        sys.stdout.write('\tCipherText: %s \n' % ctxt)
-        sys.stdout.write('\tNonce: %s \n' % nonce)
-        print('')
+        print('\nReceived Text:')
+        print(stego_data)
+        print('Stego-text transformed back to original data:')
+        print(orig_data)
+        print('CipherText: %s' % ctxt)
+        print('Nonce: %s' % nonce)
 
+    message = '\n' + intro + 'sent a message:' + decrypt(ctxt, key, nonce) + '\n'
 
-    message = intro + ' ' + decrypt(ctxt, key, nonce) + '\n'
-
-    sys.stdout.write(message)
+    print(message)
     return None
 
 
