@@ -23,6 +23,7 @@ def chat_client():
 
 	KEY = b''
 	while not (len(KEY) == 16 or len(KEY) == 24 or len(KEY) == 32):
+		print('\tError: Key Length is Incorrect, enter key with length 16, 24, or 32.')
 		KEY = bytes(raw_input("Encryption key: "))
 
 	verbose = raw_input('Do you want to turn on verbose mode? [y/N]: ')
