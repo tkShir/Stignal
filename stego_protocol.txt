@@ -36,7 +36,7 @@ T(1) ={1:hello, 2:I, 3:am, 4:in, 5:EC521, ... ,250:it, 251:is, 252:a, 253:course
 255. elite
 256. hackers
 
-if alice sends byte 00000100, then alice send "in" to bob. Bob recieves "in" and decodes it to 00001000. EVE has only seen a normal word. However, the scheme should be secure against steganalysis on every packet.
+if alice sends byte 00000100, then alice send "in" to bob. Bob recieves "in" and decodes it to 00000100. EVE has only seen a normal word. However, the scheme should be secure against steganalysis on every packet.
 
 It may be helpful to use dictionaries for transformations, for example:
 T(1) = {1:hello, 2:I, 3:am, 4:in, 5:EC521, ... ,250:it, 251:is, 252:a, 253:course, 254:for, 255:elite, 256:hackers}
