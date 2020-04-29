@@ -13,9 +13,7 @@ def chat_client():
     default = raw_input("Use default settings for IP and port settings? [y/N]: ")
 
     if default != 'y':
-        # For the sake of good UI
-
-        # Get user input details
+        # For the sake of good UI, get user input details
         host = raw_input("Chat room IP: ")
         port = int(raw_input("Chat room port: "))
     else:
@@ -26,6 +24,7 @@ def chat_client():
     while not (len(KEY) == 16 or len(KEY) == 24 or len(KEY) == 32):
         KEY = bytes(raw_input("Encryption key: "))
     
+    # Verbose mode is used to display message interior logs
     verbose = raw_input('Do you want to turn on verbose mode? [y/N]: ')
     if verbose == 'y':
         verbose = True
@@ -33,7 +32,7 @@ def chat_client():
         verbose = False
 
     os.system('clear')
-    # port = int(sys.argv[2])
+    
     print("+-+-+-+ Welcome to SteganoChat +-+-+-+\n" 
         + "*** If you want to hide something ****\n"
         + "*** important from the government ****\n"
@@ -45,7 +44,7 @@ def chat_client():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(2)
      
-    # connect to remote host
+    # Connect to the server
     try:
         s.connect((host, port))
     except:
@@ -64,7 +63,7 @@ def chat_client():
         # Get all possible ready to read/write sockets
         ready_to_read,ready_to_write,in_error = select.select(socket_list , [], [])
         
-        for sock in ready_to_read:             
+        for sock in ready_to_read:
             if sock == s:
                 data = sock.recv(4096)
                 if not data:
@@ -75,7 +74,7 @@ def chat_client():
                     # Print the data
                     process_packet(data, KEY, verbose)
                     sys.stdout.write("*** [Me]: ")
-                    sys.stdout.flush()     
+                    sys.stdout.flush()
             
             else :
                 # User sends a message
@@ -86,7 +85,6 @@ def chat_client():
                 sys.stdout.flush()
 
 
-
 def send_packet(msg, socket, key, verbose):
     ctxt, nonce = encrypt(msg, key)
 
@@ -95,7 +93,6 @@ def send_packet(msg, socket, key, verbose):
 
     # Do stego magic on the nonce_and_ctxt variable
     stego_text = nonce_and_ctxt
-
 
     # If verbose mode turned on show all info.
     if verbose:
@@ -144,7 +141,6 @@ def process_packet(stego_data, key, verbose):
     return None
 
 
-
 def encrypt(message, key):
     """
     Input:
@@ -179,7 +175,6 @@ def decrypt(ciphertext, key, nonce):
     except Exception:
         print("Incorrect decryption")
         return None
-
 
 if __name__ == "__main__":
     sys.exit(chat_client())
