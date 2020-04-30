@@ -17,7 +17,7 @@ TODO:
 7. Function that applies the model to transform the stegotext into the ciphertext. [DONE]
 
 
-###Use any ready libraries if available. Make sure to review its contents first##### [ALSO DONE]
+###Use any ready libraries if available. Make sure to review its contents first##### ~~[ALSO DONE]~~ need to review textgenrnn
 
 for 1 and 2. To set up sending and recieving of packets: https://wiki.python.org/moin/TcpCommunication
 We only want to send and recieve packets containing english text. There is no manlipulation of any headers, keep it simple. The code in the wiki is trusted. [DONE]
