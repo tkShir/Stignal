@@ -10,10 +10,13 @@ RECV_BUFFER = 4096
 PORT = 9009
 key_input = ''
 
+CHAT_ENTER_CODE = 1
+CHAT_EXIT_CODE = 2
+CHAT_MSG_CODE = 3
 
 def chat_server():
-	HOST = raw_input("Server IP: ")
-	PORT = int(raw_input("Server port: "))
+	HOST = input("Server IP: ")
+	PORT = int(input("Server port: "))
 
 	print("+-+-+-+ Welcome to SteganoChat +-+-+-+\n"
 		  + "*** If you want to hide something ****\n"
@@ -47,9 +50,11 @@ def chat_server():
 			if sock == server_socket:
 				sockfd, addr = server_socket.accept()
 				SOCKET_LIST.append(sockfd)
+				
+				clientinfo = "(%s, %s)" % addr
 				print("Client (%s, %s) connected" % addr)
 
-				broadcast(server_socket, sockfd, "[%s:%s] entered our chatting room\n" % addr)
+				broadcast(server_socket, sockfd, ("%i$%s\n" % (CHAT_ENTER_CODE, clientinfo)).encode('ascii'))
 
 			# a message from a client, not a new connection
 			else:
@@ -59,34 +64,28 @@ def chat_server():
 					data = sock.recv(RECV_BUFFER)
 					if data:
 						# there is something in the socket
+						
+						print("Got data:", data, str(sock.getpeername()))
 
-						output_data = data  # do_something_with_incoming_data(data)
-						# print(data)
-						broadcast(server_socket, sock, "\r" + '[' + str(sock.getpeername()) + '] ' + output_data)
+						output_data = ("%i$%s$%s" % (CHAT_MSG_CODE, str(sock.getpeername()), data.decode('ascii'))).encode('ascii')
+						broadcast(server_socket, sock, output_data)
 					else:
 						# remove the socket that's broken
 						if sock in SOCKET_LIST:
 							SOCKET_LIST.remove(sock)
 
+						clientinfo = "(%s, %s)" % addr
+			
 						# at this stage, no data means probably the connection has been broken
-						broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
+						broadcast(server_socket, sock, ("%i$%s\n" % (CHAT_EXIT_CODE, clientinfo)).encode('ascii'))
 
 					# exception
-				except:
-					broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
+				except ZeroDivisionError:
+					clientinfo = "(%s, %s)" % addr
+					broadcast(server_socket, sock, ("%i$%s\n" % (CHAT_EXIT_CODE, clientinfo)).encode('ascii'))
 					continue
 
 	server_socket.close()
-
-
-def do_something_with_incoming_data(data):
-	'''datareg = data.decode("utf-8")
-	zi = datareg.split("|||")
-	nonce1 = bytes(zi[0])
-	datas = bytes(z[1])
-	decrypted_data = decrypt(datas, key_input, nonce1)
-	return decrypted_data'''
-	pass
 
 
 # broadcast chat messages to all connected clients
@@ -94,14 +93,16 @@ def broadcast(server_socket, sock, message):
 	for socket in SOCKET_LIST:
 		# send the message only to peer
 		if socket != server_socket and socket != sock:
-			try:
+			socket.send(message)
+			'''try:
 				socket.send(message)
 			except:
+				print("\nRemoving broken socket")
 				# broken socket connection
 				socket.close()
 				# broken socket, remove it
 				if socket in SOCKET_LIST:
-					SOCKET_LIST.remove(socket)
+					SOCKET_LIST.remove(socket)'''
 
 
 if __name__ == "__main__":

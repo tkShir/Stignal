@@ -2,8 +2,14 @@ import sys
 import socket
 import select
 import os
+import binascii
 from Crypto.Cipher import AES
+from Crypto.Util import Counter
+from Crypto import Random
 
+CHAT_ENTER_CODE = 1
+CHAT_EXIT_CODE = 2
+CHAT_MSG_CODE = 3
 
 def chat_client():
 	# if(len(sys.argv) < 3) :
@@ -11,22 +17,23 @@ def chat_client():
 	#    sys.exit()
 
 	# Default Parameters:
-	default = raw_input("Use default settings for IP and port settings? [y/N]: ")
+	default = input("Use default settings for IP, port, and key settings? [y/N]: ")
 
 	if default != 'y':
 		# For sake of good UI
-		host = raw_input("Chat room IP: ")
-		port = int(raw_input("Chat room port: "))
+		host = input("Chat room IP: ")
+		port = int(input("Chat room port: "))
+		KEY = ''
 	else:
 		host = 'localhost'
-		port = 9009
+		port = 8888
+		KEY = 'azsxdcfvgbhnjmklazsxdcfvgbhnjmkl'
 
-	KEY = bytes(raw_input("Encryption key: "))
 	while not (len(KEY) == 16 or len(KEY) == 24 or len(KEY) == 32):
 		print('\tError: Key Length is Incorrect, enter key with length 16, 24, or 32.')
-		KEY = bytes(raw_input("Encryption key: "))
+		KEY = bytes(input("Encryption key: "), encoding='ascii')
 
-	verbose = raw_input('Do you want to turn on verbose mode? [y/N]: ')
+	verbose = input('Do you want to turn on verbose mode? [y/N]: ')
 	if verbose == 'y':
 		verbose = True
 	else:
@@ -87,107 +94,78 @@ def chat_client():
 				sys.stdout.write('[Me] ');
 				sys.stdout.flush()
 
+def apply_stego(data):
+	return data.hex()
+	
+def reverse_stego(stego):
+	#return stego
+	return binascii.unhexlify(stego)
 
 def send_packet(msg, socket, key, verbose):
-	ctxt, nonce = encrypt(msg, key)
-	nonce_and_ctxt = nonce + bytes('|||') + ctxt
-
-	# Do stego magic on the nonce_and_ctxt variable
-	# stego_text = apply_stego(nonce_and_ctxt)
-	stego_text = nonce_and_ctxt
+	iv, ciphertext = encrypt(key, msg)
+	
+	msg_data = iv + b'|||' + ciphertext
+	
+	stego_text = apply_stego(msg_data)
 
 	# If verbose mode turned on show all info.
 	if verbose:
 		print('\tSending Message: %s' % msg)
-		print('\tCipherText: %s' % ctxt)
-		print('\tNonce: %s' % nonce)
-		print('\tData to be sent: %s' % nonce_and_ctxt)
+		print('\tCipherText: %s' % ciphertext)
+		print('\tIV: %s' % iv)
+		print('\tData to be sent: %s' % msg_data)
 		print('\tStego Transformed Text: %s' % stego_text)
 		print('')
 
-	socket.send(stego_text)
+	socket.send(stego_text.encode('ascii'))
 	return None
 
 
 def process_packet(data, key, verbose):
-	# I don't know why but the nonce|||ciphertext which one client sends gets pre-appended with IP and Port
-	# In order to combat this here's some messy code
-	# When applying stego, it might glitch out so try to print them out to make sure everything is ok
-	#
-	# print(data)
-	intro_end_idx = data.index(']')
-	intro, stego_data = data[:intro_end_idx + 2], data[intro_end_idx + 2:]
-	# print(intro, stego_data)
+	data_parts = data.decode('ascii').split('$')
+	
+	code, client_info = int(data_parts[0]), data_parts[1].replace('\n', '').replace('\r', '')
+	
+	if code == CHAT_ENTER_CODE:
+		print('\n[' + client_info + '] entered chat')
+	elif code == CHAT_EXIT_CODE:
+		print('\n[' + client_info + '] left chat')
+	elif code == CHAT_MSG_CODE:
+		msg_stego = data_parts[2]
+		
+		msg_bytes = reverse_stego(msg_stego)
+		
+		msg_parts = msg_bytes.split(b'|||')
+		
+		iv, ciphertext = msg_parts[0], msg_parts[1]
+		
+		msg = decrypt(key, iv, ciphertext)
+		
+		if verbose:
+			print('\tReceived Text (from %s)' % client_info)
+			print('\tStego Message: %s' % msg_stego)
+			print('\tCipherText: %s' % ciphertext)
+			print('\tIV: %s' % iv)
+			print('\tOriginal text: %s' % msg)
 
-	# Do some stego magic to revert the packet sent to us to original data
-	# orig_data = revert_stego(stego_data)
-	orig_data = stego_data
-
-	try:
-		split_intro_nonce_and_ctxt = orig_data.split(b'|||')
-		if len(split_intro_nonce_and_ctxt) < 2:
-			sys.stdout.write(orig_data)
-			return None
-
-		# Once again pls make sure it's doing correctly, to debug turn on verbose mode on both clients and commpare
-		# the two debug outputs
-		nonce, ctxt = split_intro_nonce_and_ctxt[0], split_intro_nonce_and_ctxt[1]
-		# print(nonce)
-		# print(ctxt)
-
-	except:
-		sys.stdout.write('Packet Error: Data received was not valid\n')
-		return None
-
-	if verbose:
-		# Yeah the formatting is inconsistent which drives me nuts but when i try print(blah: '%s' % stego_data) it
-		# doesn't print the 'blah: ' part and only prints the stego_data so p much impossible to format
-		print('\nReceived Text:')
-		print(stego_data)
-		print('Stego-text transformed back to original data:')
-		print(orig_data)
-		print('CipherText: %s' % ctxt)
-		print('Nonce: %s' % nonce)
-
-	message = '\n' + intro + 'sent a message:' + decrypt(ctxt, key, nonce) + '\n'
-
-	print(message)
-	return None
+		message = '\n[' + client_info + '] sent a message: ' + msg + '\n'
+		print(message)
 
 
-def encrypt(message, key):
-	"""
-	Input:
-		message: string
-		key: bytes/bytearray/memoryview (Must be 16, 24, or 32 bytes long)
-	Output:
-		ciphertext: bytes
-		tag:
-	"""
+def encrypt(key, plaintext):
+	iv = Random.new().read(AES.block_size)
+	iv_int = int(binascii.hexlify(iv), 16) 
+	ctr = Counter.new(AES.block_size * 8, initial_value=iv_int)
+	aes = AES.new(key, AES.MODE_CTR, counter=ctr)
+	ciphertext = aes.encrypt(plaintext)
+	return (iv, ciphertext)
 
-	if not (len(key) == 16 or len(key) == 24 or len(key) == 32):
-		print('Key Length Incorrect (length: %s)' % len(key))
-		print('Exiting Encryption Method...')
-		return None
-
-	data = bytes(message)
-	cipher = AES.new(key, AES.MODE_CTR)
-	ct_bytes = cipher.encrypt(data)
-	nonce = cipher.nonce
-
-	return (ct_bytes, nonce)
-
-
-def decrypt(ciphertext, key, nonce):
-	try:
-		cipher = AES.new(key, AES.MODE_CTR, nonce=nonce)
-		plaintext_bytes = cipher.decrypt(ciphertext)
-		plaintext = plaintext_bytes.decode('utf-8')
-		return plaintext
-	except Exception:
-		print("Incorrect decryption")
-		return None
-
+def decrypt(key, iv, ciphertext):
+	iv_int = int.from_bytes(iv, "big", signed=False) 
+	ctr = Counter.new(AES.block_size * 8, initial_value=iv_int)
+	aes = AES.new(key, AES.MODE_CTR, counter=ctr)
+	plaintext = aes.decrypt(ciphertext)
+	return plaintext.decode('ascii')
 
 if __name__ == "__main__":
 	sys.exit(chat_client())
