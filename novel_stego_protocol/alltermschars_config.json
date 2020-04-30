@@ -1,0 +1,1 @@
+{"rnn_layers": 2, "rnn_size": 256, "rnn_bidirectional": false, "max_length": 40, "max_words": 60000, "dim_embeddings": 300, "word_level": false, "single_text": false, "name": "/home/amazonec2/Downloads/textgenrnn-master/alltermschars"}
