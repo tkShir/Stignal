@@ -1,0 +1,251 @@
+% Use only LaTeX2e, calling the article.cls class and 12-point type.
+
+\documentclass[12pt]{article}
+
+% Users of the {thebibliography} environment or BibTeX should use the
+% scicite.sty package, downloadable from *Science* at
+% www.sciencemag.org/about/authors/prep/TeX_help/ .
+% This package should properly format in-text
+% reference calls and reference-list numbers.
+
+\usepackage{scicite}
+\usepackage{graphicx}
+\graphicspath{{./image}}
+% Use times if you have the font installed; otherwise, comment out the
+% following line.
+
+\usepackage{times}
+
+% The preamble here sets up a lot of new/revised commands and
+% environments.  It's annoying, but please do *not* try to strip these
+% out into a separate .sty file (which could lead to the loss of some
+% information when we convert the file to other formats).  Instead, keep
+% them in the preamble of your main LaTeX source file.
+
+
+% The following parameters seem to provide a reasonable page setup.
+
+\topmargin 0.0cm
+\oddsidemargin 0.2cm
+\textwidth 16cm 
+\textheight 21cm
+\footskip 1.0cm
+
+
+%The next command sets up an environment for the abstract to your paper.
+
+\newenvironment{sciabstract}{%
+\begin{quote} \bf}
+{\end{quote}}
+
+
+% If your reference list includes text notes as well as references,
+% include the following line; otherwise, comment it out.
+
+\renewcommand\refname{References and Notes}
+
+% The following lines set up an environment for the last note in the
+% reference list, which commonly includes acknowledgments of funding,
+% help, etc.  It's intended for users of BibTeX or the {thebibliography}
+% environment.  Users who are hand-coding their references at the end
+% using a list environment such as {enumerate} can simply add another
+% item at the end, and it will be numbered automatically.
+
+\newcounter{lastnote}
+\newenvironment{scilastnote}{%
+\setcounter{lastnote}{\value{enumiv}}%
+\addtocounter{lastnote}{+1}%
+\begin{list}%
+{\arabic{lastnote}.}
+{\setlength{\leftmargin}{.22in}}
+{\setlength{\labelsep}{.5em}}}
+{\end{list}}
+
+
+% Include your paper's title here
+
+\title{\LARGE \underline{Neural Networking Protocol for Secret Communication}} 
+
+
+% Place the author information here.  Please hand-code the contact
+% information and notecalls; do *not* use \footnote commands.  Let the
+% author contact information appear immediately below the author names
+% as shown.  We would also prefer that you don't change the type-size
+% settings shown here.
+
+\author
+{Anas Hasna, Manan Monga,\\ Michael Korovkin, Takamitsu Shirono, Samyak Jain, Ivan Izhbirdeev\\
+\\
+\normalsize{\large Electrical and Computer Engineering Department}\\
+\normalsize{\large Boston University}
+%\normalsize{$^{2}$Another Unknown Address, Palookaville, ST 99999, USA}\\
+%\normalsize{$^\ast$To whom correspondence should be addressed; E-mail:  jsmith@wherever.edu.}
+}
+
+% Include the date command, but leave its argument blank.
+
+\date{}
+
+
+
+%%%%%%%%%%%%%%%%% END OF PREAMBLE %%%%%%%%%%%%%%%%
+
+
+
+\begin{document} 
+
+% Double-space the manuscript.
+
+\baselineskip18pt
+
+% Make the title.
+\begin{center}
+\maketitle{ABSTRACT} 
+
+
+
+% Place your abstract within the special {sciabstract} environment.
+
+\begin{sciabstract}
+  Secrecy of data and protection against compromise by attackers due to the use of inefficient or easily subvertable security measures employed during data transmission is a huge problem today. However, there are now many encryption schemes, including their respective implementation to address the issue of hiding data. Encryption transforms the plain-text data into random-looking bytes unknown to the attacker. However, in some cases, the very fact that encryption has been used, could lead to compromise of the secrecy of the data. For example, threatening a person to divulge his/her cryptographic keys. Here in this report, we propose a steganographic scheme based on neural networking, being used together to develop a novel data transmission protocol. This report presents a model where cryptography and steganography are implemented together - a message encrypted using the AES-CTR block cipher is hidden in plain sight using our proposed text steganography protocol. We aim to protect users sending and receiving encrypted data by obscuring the fact that such encryption on the data exist and making it look like plain text.
+\end{sciabstract}
+\end{center}
+
+
+
+% In setting up this template for *Science* papers, we've used both
+% the \section* command and the \paragraph* command for topical
+% divisions.  Which you use will of course depend on the type of paper
+% you're writing.  Review Articles tend to have displayed headings, for
+% which \section* is more appropriate; Research Articles, when they have
+% formal topical divisions at all, tend to signal them with bold text
+% that runs into the paragraph, for which \paragraph* is the right
+% choice.  Either way, use the asterisk (*) modifier, as shown, to
+% suppress numbering.
+
+\section*{I. Introduction}
+Modern cryptography has advanced to a level that it is relatively easy to maintain the secrecy of confidential and valuable data with the correct technology and practices. Regardless, it is easy to detect where encryption has been used by statistically analyzing meaningful data and finding that the byte distribution is random. Therefore, cryptography lets us down when we do not want the attackers to know that any information is being hidden at all. This can cause all kinds of problems like censorship by tyrannical governments, oppression of free speech and other techniques knows as "Rubber-hose cryptanalysis".\\
+Steganography is the process of hiding a secret message inside another message in a way that the presence of the secret message is hard to detect for someone from whom we want to keep the message secret.  Using steganography, we can transmit sensitive data in disguise as seemingly innocent and understandable data, thereby not raising any suspicion of an attacker intercepting the communication.\\
+However, steganography does not completely abide by the Kerkchhoff's Principle, which states: A cryptosystem should be secure even if everything about the system, except the key, is public knowledge.
+Standard steganographic schemes mostly use obfuscation as a protection mechanism. The following issue arises, if an enemy knows the process that we are using to obfuscate our messages and can intercept the steganographic packets, they can not only block the covert channel but also read data that was sent. The detection of steganographic packets may not be a trivial problem, but it is still not out of bounds for a patient and resourceful adversary. To make this more robust, we add forward secrecy to our system by creating a hybrid steganographic and cryptographic system which uses the advantages of both approaches. Our proposed steganographic scheme is assumed to abide by Kerkchhoff's principle, as the algorithm is public, and the shared secret is the neural networking model, which is produced by training the model generation algorithm on shared private documents.
+This report details how we went about creating this system, and in Section II, we talk about the cryptographic methods and other tools used by us in this system and why they are secure. In Section III and we detail our solution and implementation of it. In Section IV, we look at the results of this study. We end this report by concluding how effective our implementation of steganography and cryptography turned out to be.
+
+
+\section*{II. Technology used in this system}
+
+We have used and combined various technologies already developed and in use extensively across the industry. The three basic technologies used are:\\
+
+\textbf{1. textgenrnn :} \emph{training model to generate steganographic texts out of our ciphertexts}\\  
+textgenrnn is a Python 3 module build on Tensorflow and Keras frameworks for creating character RNNs (Recurrent Neural Networks). The benefit of texgenrnn over other char-rnn implementations is that it abstracts the process of creating and training such char-rnns to a few lines of code and provides numerous improvements such as character embeddings, attention-weighted averaging and a decaying learning rate. Unlike other internet tutorials on neural networks for text-generation, textgenrnn makes use of deep learning frameworks (as discussed before) to help developers easily train their own neural network models of any size and complexity on any text dataset with a few lines of code on a GPU very quickly (using Google Collaboratory for free). In addition, developers can also use pretrained models to quickly train on a new datasets.
+ Some features of textgenrnn which distinguish it from other text generation models include the capability to work with text at both character-level and word-level, utilization of the CuDNN implementation (in Keras framework) of RNNs when trained on GPUs to get lesser training time as compared to the LSTM implementations (an approximate speedup of 7x), ability to configure RNN size, number of layers, whether to use bidirectional RNNs and lastly, it generates text interactively for customized stories.\\
+ 
+\textbf{2. Advanced Encryption Standard (AES) :} \emph{block cipher used for encryption of our message}\\
+We have adhered to the golden rule of encryption, “Never use your own crypto” and used Advanced Encryption Standard (AES), also known as Rijndael, which is a block cipher recommended for usage by The National Institute of Standards and Technology (NIST)[1]. AES can be used in many different modes. AES Counter mode (AES-CTR) is the one used by us for this system. It requires the encryptor to generate a unique per-packet value and communicate this value to the decryptor. This per-packet value is called an initialization vector (IV). The same IV and key combination must not be used more than once otherwise the security of this block cipher is compromised. The encryptor must generate the IV in any manner that ensures uniqueness. Common approaches to IV generation include incrementing a counter for each packet and linear feedback shift registers (LFSRs). AES-CTR uses the only AES encrypt operation (for both encryption and decryption), making AES-CTR implementations smaller than implementations of many other AES modes. When used properly, AES-CTR mode provides strong confidentiality. Bellare, Desai, Jokipii, Rogaway show in [2] that the privacy guarantees provided by counter mode are at least as strong as those for CBC mode when using the same block cipher.\\
+
+\textbf{3. Python Socket Chat Server:}\emph{ we use this to send and receive our messages}\\
+Our chat server can accept connections from new clients and can identify unique users. It is coded in Python and works well with CLI and is fast and has a good throughput. We have validated that the protocol works on localhost IP. The server uses Python’s socket and system library. The messaging model works as follows. First, a chatroom is created by starting a server with a known IP and port. Next, clients can join the chatroom if they know the proper IP and port. When a client joins and sends a message, the message is broadcasted by the server to all clients in the chatroom; each client inputs their secret key upon joining the chatroom, which is used to decrypt all incoming messages and encrypt all outgoing ones. Clients can see their own messages in a decrypted format. Similarly, upon receiving a message, they can see its origin and they can view it in a decrypted format.
+
+\section*{III. Solution details and implementation}
+
+In this section, we discuss how our solution has been implemented and how a sender Alice can use it to send a secret message to receiver Bob. Also see figure 1 for the dataflow.\\
+\begin{enumerate}
+    \item Alice generates a random key and a neural networking model, then shares  for AES-CTR and text generation model and shares it with Bob
+    \item Alice inputs text into our system
+    \item The system encrypts the texts and generates a ciphertext with AES-CTR
+    \item This ciphertext is converted to steganographic text file in the following steps
+    \begin{enumerate}
+        \item Generate 2 suggestions using the model and store them in an array T0
+        \item Take the value of the most significant bit = i in ciphertext and use this to start the steganographic file generation as steganotext += T0[i]
+        \item This i is used as input into the model, this step will dictate how the generation will go as it generates 2 suggestions and stores them in an array T1
+        \item ciphertext = ciphertext[1:] remove the leftmost bit as we are done with it.
+        \item This process repeats till there are no more bits left in the ciphertext
+    \end{enumerate}
+    \item The steganographic text generated by this process is then sent over socket chat room by Alice
+    \item Bob receives the steganographic text
+    \item Uses the text generation model sent by Alice as part of key exchange to generate the 2 initial suggestions and store them in an array T0, this will be the same array as initial sender array
+    \item Bob then takes the index where the steganotext[0] occurs in T0 and starts generating ciphertext as  ciphertext += index
+    \item Bob also uses the index value as the input for the model, this dictates how the text generation goes
+    \item This process is repeated for evert steganotext but till the entire steganographic text has been converted to ciphertext.
+    \item This ciphertext generated is decrypted into the secret message by using the secret key sent during key exchange and AES-CTR
+\end{enumerate}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.5]{image/img1.png}
+    \caption{Flow Diagram of presented solution}
+    \label{fig:my_label}
+\end{figure}
+
+
+
+
+
+
+% Your references go at the end of the main text, and before the
+% figures.  For this document we've used BibTeX, the .bib file
+% scibib.bib, and the .bst file Science.bst.  The package scicite.sty
+% was included to format the reference numbers according to *Science*
+% style.
+
+
+\bibliography{scibib}
+
+\bibliographystyle{Science}
+
+
+
+% Following is a new environment, {scilastnote}, that's defined in the
+% preamble and that allows authors to add a reference at the end of the
+% list that's not signaled in the text; such references are used in
+% *Science* for acknowledgments of funding, help, etc.
+
+\begin{scilastnote}
+\item We've included in the template file \texttt{scifile.tex} a new
+environment, \texttt{\{scilastnote\}}, that generates a numbered final
+citation without a corresponding signal in the text.  This environment
+can be used to generate a final numbered reference containing
+acknowledgments, sources of funding, and the like, per {\it Science\/}
+style.
+\end{scilastnote}
+
+
+
+
+% For your review copy (i.e., the file you initially send in for
+% evaluation), you can use the {figure} environment and the
+% \includegraphics command to stream your figures into the text, placing
+% all figures at the end.  For the final, revised manuscript for
+% acceptance and production, however, PostScript or other graphics
+% should not be streamed into your compliled file.  Instead, set
+% captions as simple paragraphs (with a \noindent tag), setting them
+% off from the rest of the text with a \clearpage as shown  below, and
+% submit figures as separate files according to the Art Department's
+% instructions.
+
+
+\clearpage
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
