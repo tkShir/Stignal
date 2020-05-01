@@ -21,6 +21,6 @@ TODO:
 
 ################long#term#############
 
-8. after the protocol is finished, we need statistical analysis of the distinguishability between the steganotext and real human text.
+9. after the protocol is finished, we need statistical analysis of the distinguishability between the steganotext and real human text.
 
 ######################################
