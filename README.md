@@ -2,31 +2,21 @@
 
 TODO:
 
-1. Function to send IP packets containing stegotext. [NEARLY DONE]
+1. Function to send IP packets containing stegotext. [Crashes]
 
-2. Function to recieve IP packets and extract the stegotext, so that we can operate on it. [NEARLY DONE]
+2. Function to recieve IP packets and extract the stegotext, so that we can operate on it. [Crashes]
 
-3. Finding a deterministic neural networking model to be exchanged. [DONE]
+3. write the paper to be more formal and rigorous, check grammar and coherence as well.
 
-4. Function to encrypt input. [DONE]
+4. Fix client and server crashing after sending stegotext.
 
-5. Function to decrypt output. [DONE]
+5. add the options to chose the key(base64), nonce(base64) and neural network model (hdf5). And the IV for the NN model.(more on the NN IV later, will be written in the paper).
 
-6. Function that applies the model to transform the ciphertext into a stegotext. [DONE]
+6. better support for hosting on remote servers.
 
-7. Function that applies the model to transform the stegotext into the ciphertext. [DONE]
-
-
-###Use any ready libraries if available. Make sure to review its contents first##### ~~[ALSO DONE]~~ need to review textgenrnn
-
-for 1 and 2. To set up sending and recieving of packets: https://wiki.python.org/moin/TcpCommunication
-We only want to send and recieve packets containing english text. There is no manlipulation of any headers, keep it simple. The code in the wiki is trusted. [DONE]
-
-3. still in testing, any suggestions are welcome and recommended. [DONE]
+7. Clear and concise documentation and demos.
 
 
-for 4 and 5. Our choice for the encryption scheme is AES-CTR, python implementation is found here: https://pycryptodome.readthedocs.io/en/latest/src/cipher/aes.html 
-We will apply AES-CTR on the message before it is transformed. So we need to encrypt the message and store it. This library is trusted. [DONE]
-
-6 and 7. this is basic use of dictionaries in python. There are a few steps in 3. that depend on this. [DONE]
-
+----------------long-term------------
+8. after the protocol is finished, we need statistical analysis of the distinguishability between the steganotext and real human text.
+-------------------------------------
