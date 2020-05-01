@@ -16,7 +16,9 @@ TODO:
 
 7. Clear and concise documentation and demos.
 
+8. Minor error in the steganofunction where output has missing bits on specific inputs.
 
-----------------long-term------------
+
+################long#term#############
 8. after the protocol is finished, we need statistical analysis of the distinguishability between the steganotext and real human text.
--------------------------------------
+######################################
