@@ -4,5 +4,5 @@ to test the code:
 
 2. cd into novel_stego_protocol	
 
-3. run python3.7 main.py
+3. run python3.7 main.py (install all dependencies)
 
