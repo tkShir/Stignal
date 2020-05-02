@@ -1,6 +1,11 @@
+import tensorflow as tf
+# config = tf.C
+# config.gpu_options.allow_growth = True
+# session = tf.Session(config=config, ...)
 from textgenrnn import textgenrnn
-
-textgen = textgenrnn('/home/amazonec2/hacker_news.hdf5')
+print("input hdf5 file directory")
+textgendir = input("input hdf5 location: ")
+textgen = textgenrnn(textgendir)
 from bitstring import BitArray
 
 print("####PLAINTEXT###")
